@@ -2,7 +2,7 @@
     <div>
         <header class="flex">
             <div class="branding flex">
-                <img src="@assets/file-invoice-dollar-solid.png" alt="">
+                <img src="/assets/file-invoice-dollar-solid.png" alt="">
             </div>
         </header>
     </div>
@@ -14,15 +14,31 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 header {
     z-index: 99;
-    position: sticky;
-    top: 0;
-    height: 60px;
-    background-color: #1e2139;
-    align-items: center;
+    flex-direction: row;
+    background-color: #1e2139; 
+    @media(min-width: 900px) {
+        min-height: 100%;
+        min-width: 90px;
+        flex-direction: column;
+        border-radius: 0 20px 20px 0;
+    }   
+}
+
+.branding {
+    border-radius: 0 20px 20px 0;
+    background-color: #7c5dfa;
     justify-content: center;
-    border-bottom: 1px solid #3d3fOr;
+    padding: 24px;
+    @media (min-width: 900px) {
+        width: 100%;
+    }
+
+    img {
+        width: auto;
+        height: 30px;
+    }
 }
 </style>
