@@ -1,15 +1,17 @@
 <template>
   <div>
+    <NuxtLayout>
     <div v-if="!mobile" class="app flex flex-column">
       <Navigation />
       <div class="app-content flex flex-column">
-        <router-view />
+        <NuxtPage />
       </div>
     </div>
     <div v-else class="mobile-message flex flex-column">
       <h2>Sorry, this app is not supported on mobile devices</h2>
       <p>To use this app, please use a computer or a tablet.</p>
     </div>
+    </NuxtLayout>
   </div>
 </template>
 
