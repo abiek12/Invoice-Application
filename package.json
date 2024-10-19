@@ -11,7 +11,12 @@
   },
   "dependencies": {
     "nuxt": "^3.13.0",
+    "uid": "^2.0.2",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vuex": "^4.1.0"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.80.3"
   }
 }
