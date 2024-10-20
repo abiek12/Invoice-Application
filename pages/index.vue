@@ -7,7 +7,7 @@
                 <span>There are 4 total Invoices</span>
             </div>
             <div class="right flex">
-                <div class="filter flex" @click="toggleFilterMenu" ref="filter">
+                <div class="filter flex" @click="toggleFilterMenu">
                     <span>Filter by status</span>
                     <img src="/assets/icon-arrow-down.svg" alt="">
                     <ul v-show="filterMenu" class="filter-menu">
@@ -33,6 +33,10 @@ const filterMenu = ref(false);
 
 const toggleFilterMenu = () => {
     filterMenu.value = !filterMenu.value;
+}
+
+const newInvoice = () => {
+    
 }
 </script>
 
@@ -65,11 +69,6 @@ const toggleFilterMenu = () => {
                 position: relative;
                 margin-right: 40px;
 
-                span,
-                img {
-                    pointer-events: none;
-                }
-
                 img {
                     margin-left: 12px;
                     width: 9px;
@@ -93,6 +92,25 @@ const toggleFilterMenu = () => {
                             color: #1e2139;
                             background-color: #fff;
                         }
+                    }
+                }
+            }
+
+            .button {
+                padding: 8px 10px;
+                background-color: #7c5dfa;
+                border-radius: 40px;
+
+                .inner-btn {
+                    margin-right: 8px;
+                    border-radius: 50%;
+                    padding: 8px;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #fff;
+                    img {
+                        width: 10px;
+                        height: 10px;
                     }
                 }
             }

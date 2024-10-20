@@ -4,6 +4,7 @@
     <div v-if="!mobile" class="app flex flex-column">
       <Navigation />
       <div class="app-content flex flex-column">
+        <InvoiceModal />
         <NuxtPage />
       </div>
     </div>
@@ -17,6 +18,7 @@
 
 <script setup>
 import Navigation from './components/Navigation.vue'
+import InvoiceModal from './components/InvoiceModal.vue'
 import {ref, onMounted} from 'vue'
 
   const mobile = ref(null);
