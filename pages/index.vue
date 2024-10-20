@@ -10,6 +10,18 @@
                 <div class="filter flex" @click="toggleFilterMenu" ref="filter">
                     <span>Filter by status</span>
                     <img src="/assets/icon-arrow-down.svg" alt="">
+                    <ul v-show="filterMenu" class="filter-menu">
+                        <li>Draft</li>
+                        <li>Pending</li>
+                        <li>Paid</li>
+                        <li>Clear Filter</li>
+                    </ul>
+                </div>
+                <div @click="newInvoice" class="button flex">
+                    <div class="inner-btn flex">
+                        <img src="/assets/icon-plus.svg" alt="">
+                    </div>
+                    <span>New Invoice</span>
                 </div>
             </div>
         </div>
@@ -17,9 +29,74 @@
 </template>
 
 <script setup>
+const filterMenu = ref(false);
 
+const toggleFilterMenu = () => {
+    filterMenu.value = !filterMenu.value;
+}
 </script>
 
 <style lang="scss" scoped>
+.home {
+    color: #fff;
 
+    .header {
+        margin-bottom: 65px;
+
+        .left,
+        .right {
+            flex: 1;
+        }
+
+        .right {
+            justify-content: flex-end;
+            align-items: center;
+
+            .button,
+            .filter {
+                align-items: center;
+
+                span {
+                    font-size: 12px;
+                }
+            }
+
+            .filter {
+                position: relative;
+                margin-right: 40px;
+
+                span,
+                img {
+                    pointer-events: none;
+                }
+
+                img {
+                    margin-left: 12px;
+                    width: 9px;
+                    height: 5px;
+                }
+
+                .filter-menu {
+                    width: 120px;
+                    position: absolute;
+                    top: 25px;
+                    list-style: none;
+                    background-color: #1e2139;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+                    li {
+                        cursor: pointer;
+                        font-size: 12px;
+                        padding: 10px 20px;
+
+                        &:hover {
+                            color: #1e2139;
+                            background-color: #fff;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 </style>
