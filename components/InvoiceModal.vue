@@ -88,11 +88,11 @@
                             <th class="price">Price</th>
                             <th class="total">Total</th>
                         </tr>
-                        <tr class="table-item flex" v-for="(item, index) in invoiceItemList" :key="index">
-                            <td class="item-name"><input type="text" v-model="item.itemName"></td>
-                            <td class="qty"><input type="text" v-model="item.qty"></td>
-                            <td class="price"><input type="text" v-model="item.price"></td>
-                            <td class="total flex">${{ (item.total = item.qty * item.price).toFixed(2) }}</td>
+                        <tr class="table-items flex" v-for="(item, index) in invoiceItemList" :key="index">
+                            <td class="item-name"><input required type="text" v-model="item.itemName"></td>
+                            <td class="qty"><input required type="number" v-model="item.qty"></td>
+                            <td class="price"><input required type="number" v-model="item.price"></td>
+                            <td class="total flex">₹ {{ (item.total = item.qty * item.price).toFixed(2) }}</td>
                             <img @click="deleteInvoiceItem(item.id)" class="delete" src="/assets/icon-delete.svg" alt="delete-icon">
                         </tr>
                     </table>
@@ -118,7 +118,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
+import { uid } from 'uid';
 
 const billerStreetAddress = ref(null)
 const billerCity = ref(null)
@@ -147,6 +148,20 @@ const store = useGlobalStore();
 
 const closeInvoice = () => {
     store.TOGGLE_INVOICE();
+}
+
+const addNewInvoiceItem = () => {
+    invoiceItemList.value.push({
+        id: uid(),
+        itemName: '',
+        qty: 0,
+        price: 0,
+        total: 0
+    });
+}
+
+const deleteInvoiceItem = (id) => {
+    invoiceItemList.value = invoiceItemList.value.filter((item) => item.id !== id);
 }
 
 // Get current date for invoice date field
@@ -253,6 +268,16 @@ watch(paymentTerms, () => {
                             .total {
                                 flex-basis: 20%;
                                 align-self: center;
+                            }
+
+                            .delete {
+                                cursor: pointer;
+                            }
+
+                            input[type="number"]::-webkit-outer-spin-button,
+                            input[type="number"]::-webkit-inner-spin-button {
+                              -webkit-appearance: none;
+                              margin: 0;
                             }
                         }
                 
