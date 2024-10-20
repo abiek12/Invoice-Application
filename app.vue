@@ -30,7 +30,7 @@ import {ref, onMounted} from 'vue'
 
   // Accessing the state
   const invoiceModal = computed(() => store.invoiceModal);
-
+  
   const checkScreen = ()=> {
     const windowWidth = window.innerWidth;
     if(windowWidth <= 750) {

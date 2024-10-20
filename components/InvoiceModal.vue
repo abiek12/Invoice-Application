@@ -140,6 +140,7 @@ const invoicePending = ref(null)
 const invoiceDraft = ref(null)
 const invoiceItemList = ref([])
 const invoiceTotal = ref(0)
+const dateOptions = { year: "numeric", month: "short", day: "numeric" }
 
 
 // Initialize the store
@@ -148,6 +149,10 @@ const store = useGlobalStore();
 const closeInvoice = () => {
     store.TOGGLE_INVOICE();
 }
+
+// Get current date for invoice date field
+invoiceDateUnix.value = Date.now();
+invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString('en-us', dateOptions);
 
 </script>
 
