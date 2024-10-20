@@ -142,7 +142,6 @@ const invoiceItemList = ref([])
 const invoiceTotal = ref(0)
 const dateOptions = { year: "numeric", month: "short", day: "numeric" }
 
-
 // Initialize the store
 const store = useGlobalStore();
 
@@ -153,6 +152,15 @@ const closeInvoice = () => {
 // Get current date for invoice date field
 invoiceDateUnix.value = Date.now();
 invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString('en-us', dateOptions);
+
+watch(paymentTerms, () => {
+    // Get current date for payment due date field
+    const futureDate = new Date();
+    if(paymentTerms.value) {
+        paymentDueDateUnix.value = futureDate.setDate(futureDate.getDate() + parseInt(paymentTerms.value));
+        paymentDueDate.value = new Date(paymentDueDateUnix.value).toLocaleDateString('en-us', dateOptions);
+    }
+});
 
 </script>
 
