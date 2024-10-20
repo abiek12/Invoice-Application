@@ -4,7 +4,7 @@
     <div v-if="!mobile" class="app flex flex-column">
       <Navigation />
       <div class="app-content flex flex-column">
-        <InvoiceModal />
+        <InvoiceModal v-if="invoiceModal" />
         <NuxtPage />
       </div>
     </div>
@@ -22,6 +22,13 @@ import InvoiceModal from './components/InvoiceModal.vue'
 import {ref, onMounted} from 'vue'
 
   const mobile = ref(null);
+
+  // Initialize the store
+  const store = useGlobalStore();
+
+  // Accessing the state
+  const invoiceModal = computed(() => store.invoiceModal);
+
   const checkScreen = ()=> {
     const windowWidth = window.innerWidth;
     if(windowWidth <= 750) {

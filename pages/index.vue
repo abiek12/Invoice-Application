@@ -29,14 +29,19 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 const filterMenu = ref(false);
+
+// Initialize the store
+const store = useGlobalStore();
+
+const newInvoice = () => {
+    store.TOGGLE_INVOICE();
+}
 
 const toggleFilterMenu = () => {
     filterMenu.value = !filterMenu.value;
-}
-
-const newInvoice = () => {
-    
 }
 </script>
 

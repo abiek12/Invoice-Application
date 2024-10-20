@@ -142,6 +142,13 @@ const invoiceItemList = ref([])
 const invoiceTotal = ref(0)
 
 
+// Initialize the store
+const store = useGlobalStore();
+
+const closeInvoice = () => {
+    store.TOGGLE_INVOICE();
+}
+
 </script>
 
 <style lang="scss" scoped>

@@ -8,10 +8,9 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Navigation'
-}
+<script setup>
+name: 'Navigation'
+
 </script>
 
 <style lang="scss" scoped>
