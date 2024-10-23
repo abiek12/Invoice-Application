@@ -120,6 +120,8 @@
 <script setup>
 import { ref } from 'vue';
 import { uid } from 'uid';
+import { db } from '../firebase/firebaseInit';
+import { doc, setDoc, collection } from 'firebase/firestore';
 
 const billerStreetAddress = ref(null)
 const billerCity = ref(null)
@@ -158,6 +160,63 @@ const addNewInvoiceItem = () => {
         price: 0,
         total: 0
     });
+}
+
+const calculateInvoiceTotal = () => {
+    invoiceTotal.value = 0;
+    invoiceItemList.value.forEach(item => {
+        invoiceTotal.value += item.total;
+    })
+}
+
+const publishInvoice = () => {
+    invoicePending.value = true;
+}
+
+const saveDraft = () => {
+    invoiceDraft.value = true;
+}
+
+const uploadInvoice = async () => {
+    if (invoiceItemList.value.length <= 0) {
+        alert("Please ensure you filled out work items!");
+        return;
+    }
+    calculateInvoiceTotal();
+
+    const newInvoiceRef = doc(collection(db, 'invoices'));
+    
+    await setDoc(newInvoiceRef, {
+        invoiceId: uid(6),
+        billerStreetAddress: billerStreetAddress.value,
+        billerCity: billerCity.value,
+        billerZipCode: billerZipCode.value,
+        billerCountry: billerCountry.value,
+        clientName: clientName.value,
+        clientEmail: clientEmail.value,
+        clientStreetAddress: clientStreetAddress.value,
+        clientCity: clientCity.value,
+        clientZipCode: clientZipCode.value,
+        clientCountry: clientCountry.value,
+        invoiceDate: invoiceDate.value,
+        invoiceDateUnix: invoiceDateUnix.value,
+        paymentTerms: paymentTerms.value,
+        paymentDueDate: paymentDueDate.value,
+        paymentDueDateUnix: paymentDueDateUnix.value,
+        productDescription: productDescription.value,
+        invoiceItemList: invoiceItemList.value,
+        invoiceTotal: invoiceTotal.value,
+        invoicePending: invoicePending.value,
+        invoiceDraft: invoiceDraft.value,
+        invoicePaid: null,
+    });
+    
+    store.TOGGLE_INVOICE();
+}
+
+
+const submitForm = () => {
+    uploadInvoice();
 }
 
 const deleteInvoiceItem = (id) => {
