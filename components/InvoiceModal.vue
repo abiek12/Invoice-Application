@@ -1,6 +1,7 @@
 <template>
     <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-column">
         <form @submit.prevent="submitForm" class="invoice-content">
+            <Loading v-show="loading"/>
             <h1>New Invoice</h1>
             <!-- Bill From -->
              <div class="bill-from flex flex-column">
@@ -143,6 +144,7 @@ const invoicePending = ref(null)
 const invoiceDraft = ref(null)
 const invoiceItemList = ref([])
 const invoiceTotal = ref(0)
+const loading = ref(true)
 const dateOptions = { year: "numeric", month: "short", day: "numeric" }
 
 // Initialize the store
@@ -182,6 +184,7 @@ const uploadInvoice = async () => {
         alert("Please ensure you filled out work items!");
         return;
     }
+    loading.value = true;
     calculateInvoiceTotal();
 
     const newInvoiceRef = doc(collection(db, 'invoices'));
@@ -210,6 +213,8 @@ const uploadInvoice = async () => {
         invoiceDraft: invoiceDraft.value,
         invoicePaid: null,
     });
+
+    loading.value = false;
     
     store.TOGGLE_INVOICE();
 }
