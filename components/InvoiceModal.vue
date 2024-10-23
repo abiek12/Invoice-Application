@@ -144,7 +144,7 @@ const invoicePending = ref(null)
 const invoiceDraft = ref(null)
 const invoiceItemList = ref([])
 const invoiceTotal = ref(0)
-const loading = ref(true)
+const loading = ref(false)
 const dateOptions = { year: "numeric", month: "short", day: "numeric" }
 
 // Initialize the store
