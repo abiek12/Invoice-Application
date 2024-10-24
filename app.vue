@@ -4,6 +4,7 @@
     <div v-if="!mobile" class="app flex flex-column">
       <Navigation />
       <div class="app-content flex flex-column">
+        <Modal v-if="modalActive"/>
         <transition name="invoice">
           <InvoiceModal v-if="invoiceModal" />
         </transition>
@@ -30,6 +31,7 @@ import {ref, onMounted} from 'vue'
 
   // Accessing the state
   const invoiceModal = computed(() => store.invoiceModal);
+  const modalActive = computed(() => store.modalActive);
   
   const checkScreen = ()=> {
     const windowWidth = window.innerWidth;

@@ -145,6 +145,7 @@ const invoiceDraft = ref(null)
 const invoiceItemList = ref([])
 const invoiceTotal = ref(0)
 const loading = ref(false)
+const invoiceWrap = ref(null);
 const dateOptions = { year: "numeric", month: "short", day: "numeric" }
 
 // Initialize the store
@@ -152,6 +153,12 @@ const store = useGlobalStore();
 
 const closeInvoice = () => {
     store.TOGGLE_INVOICE();
+}
+
+const checkClick = (e) => {
+    if(e.target == invoiceWrap.value) {
+        store.TOGGLE_MODAL();
+    }
 }
 
 const addNewInvoiceItem = () => {
