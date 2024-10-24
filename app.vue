@@ -45,6 +45,8 @@ import {ref, onMounted} from 'vue'
   onMounted(() => {
     checkScreen();
     window.addEventListener('resize', checkScreen);
+
+    store.GET_INVOICES();
   });
 
   onUnmounted(() => {
