@@ -25,6 +25,10 @@
                 </div>
             </div>
         </div>
+        <!-- Invoices -->
+         <div class="">
+            <invoice v-for="(invoice, index) in invoices" :invoice="invoice" :key="index"/>
+         </div>
     </div>
 </template>
 
@@ -35,6 +39,9 @@ const filterMenu = ref(false);
 
 // Initialize the store
 const store = useGlobalStore();
+
+//accessing states
+const invoices = computed(() => store.invoice);
 
 const newInvoice = () => {
     store.TOGGLE_INVOICE();

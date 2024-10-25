@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="invoicesLoadded">
     <NuxtLayout>
     <div v-if="!mobile" class="app flex flex-column">
       <Navigation />
@@ -32,6 +32,7 @@ import {ref, onMounted} from 'vue'
   // Accessing the state
   const invoiceModal = computed(() => store.invoiceModal);
   const modalActive = computed(() => store.modalActive);
+  const invoicesLoadded = computed(() => store.invoicesLoaded);
   
   const checkScreen = ()=> {
     const windowWidth = window.innerWidth;
