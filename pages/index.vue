@@ -25,6 +25,15 @@
                 </div>
             </div>
         </div>
+        <!-- Invoices -->
+         <div class="" v-if="invoices.values">
+            <invoice v-for="(invoice, index) in invoices" :invoice="invoice" :key="index"/>
+         </div>
+         <div class="empty flex flex-column" v-else>
+            <img src="../assets/illustration-empty.svg" alt="Invoice empty illustration">
+            <h3>There is nothing here</h3>
+            <p>Create a new invoice by clicking the new Invoice button and get started</p>
+         </div>
     </div>
 </template>
 
@@ -35,6 +44,9 @@ const filterMenu = ref(false);
 
 // Initialize the store
 const store = useGlobalStore();
+
+//accessing states
+const invoices = computed(() => store.invoiceData);
 
 const newInvoice = () => {
     store.TOGGLE_INVOICE();
@@ -119,6 +131,29 @@ const toggleFilterMenu = () => {
                     }
                 }
             }
+        }
+    }
+
+    .empty {
+        margin-top: 130px;
+        align-items: center;
+
+        img {
+            width: 214px;
+            height: 200px;
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 40px;
+        }
+
+        p {
+            text-align: center;
+            max-width: 224px;
+            font-size: 12px;
+            font-weight: 300;
+            margin-top: 16px;
         }
     }
 }
