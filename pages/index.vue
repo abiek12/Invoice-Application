@@ -41,7 +41,7 @@ const filterMenu = ref(false);
 const store = useGlobalStore();
 
 //accessing states
-const invoices = computed(() => store.invoice);
+const invoices = computed(() => store.invoiceData);
 
 const newInvoice = () => {
     store.TOGGLE_INVOICE();

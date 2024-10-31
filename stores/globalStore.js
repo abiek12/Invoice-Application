@@ -21,8 +21,6 @@ export const useGlobalStore = defineStore('globalStore',()=> {
 
   const SET_INVOICE_DATA = (payload) => {
     invoiceData.value.push(payload)
-    console.log("hiii");
-    console.log(invoiceData.value);
   }
 
   const INVOICES_LOADED = () => {
@@ -50,5 +48,5 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     }
   }
 
-  return {invoiceModal, TOGGLE_INVOICE, modalActive, TOGGLE_MODAL, SET_INVOICE_DATA, GET_INVOICES, invoicesLoaded}
+  return {invoiceModal, TOGGLE_INVOICE, modalActive, TOGGLE_MODAL, SET_INVOICE_DATA, GET_INVOICES, invoicesLoaded, invoiceData}
 })
