@@ -124,6 +124,14 @@ import { useRoute } from 'vue-router';
       // Navigate to root page
       navigateTo('/');
     }
+
+    const updateStatusToPaid = async (docId)=> {
+      await store.UPDATE_STATUS_TO_PAID(docId);
+    }
+
+    const updateStatusToPending = async (docId)=> {
+      await store.UPDATE_STATUS_TO_PENDING(docId);
+    }
 </script>
 
 <style lang="scss" scoped>

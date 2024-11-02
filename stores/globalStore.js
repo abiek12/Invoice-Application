@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "~/firebase/firebaseInit";
 
 export const useGlobalStore = defineStore('globalStore',()=> {
@@ -87,6 +87,48 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     }
   }
 
+  const UPDATE_STATUS_TO_PAID = async (payload) => {
+    try {
+      const invoiceRef = doc(db, 'invoices', payload);
+      await updateDoc(invoiceRef,{
+        invoicePaid: true,
+        invoicePending: false
+      });
+
+      // Update local state if successful
+      invoiceData.value.forEach(invoice => {
+        if(invoice.docId === payload) {
+          invoice.invoicePaid = true;
+          invoice.invoicePending = false;
+        }
+      })
+    } catch (error) {
+      alert("Error while updating payment status.");
+      console.error("Error while updating payment status.", error);
+    }
+  }
+
+  const UPDATE_STATUS_TO_PENDING = async (payload) => {
+    try {
+      const invoiceRef = doc(db, 'invoices', payload);
+      await updateDoc(invoiceRef,{
+        invoicePaid: false,
+        invoicePending: true,
+        invoiceDraft: false
+      });
+      invoiceData.value.forEach(invoice => {
+        if(invoice.docId === payload) {
+          invoice.invoicePaid = false;
+          invoice.invoicePending = true;
+          invoice.invoiceDraft = false;
+        }
+      })
+    } catch (error) {
+      alert("Error while updating payment status.");
+      console.error("Error while updating payment status.", error);
+    }
+  }
+
   return {invoiceModal, 
     TOGGLE_INVOICE, 
     modalActive, 
@@ -101,6 +143,8 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     editInvoice,
     DELETE_INVOICE_FROM_ARRAY,
     UPDATE_INVOICE,
-    DELETE_INVOICE
+    DELETE_INVOICE,
+    UPDATE_STATUS_TO_PAID,
+    UPDATE_STATUS_TO_PENDING
   }
 })
