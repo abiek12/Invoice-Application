@@ -16,7 +16,7 @@
             </div>
             </div>
             <div class="right flex">
-                <button class="dark-purple" @click="toggleEditInvoice(currentInvoice[0].docId)">Edit</button>
+                <button class="dark-purple" @click="toggleEditInvoice">Edit</button>
                 <button class="red" @click="deleteInvoice(currentInvoice[0].docId)">Delete</button>
                 <button class="green" v-if="currentInvoice[0].invoicePending" @click="updateStatusToPaid(currentInvoice[0].docId)">Mark as paid</button>
                 <button class="orange" v-if="currentInvoice[0].invoiceDraft || currentInvoice[0].invoicePaid" @click="updateStatusToPending(currentInvoice[0].docId)">Mark as pending</button>
@@ -94,15 +94,53 @@ import { useRoute } from 'vue-router';
 
     //accessing states
     invoices = computed(() => store.invoiceData);
+    let editInvoice = computed(()=> store.editInvoice);
+
+  // Watcher to respond to changes in editInvoice
+  watch(
+      editInvoice,
+      (updated) => {
+          if (!updated) {
+              currentInvoice.value = store.currentInvoiceArray;
+          }
+      },
+      { immediate: true }
+  );
 
     const getCurrentInvoice = () => {        
         store.SET_CURRENT_INVOICE(invoices.value, route.params.invoiceId);       
     }
 
     getCurrentInvoice();
-
     currentInvoice = computed(() => store.currentInvoiceArray);
-    console.log(currentInvoice.value);
+
+    const toggleEditInvoice = () => {      
+      store.TOGGLE_EDIT_INVOICE();
+      store.TOGGLE_INVOICE();
+    }
+
+    const deleteInvoice = async (docId)=> {
+      await store.DELETE_INVOICE(docId);
+      // Navigate to root page
+      navigateTo('/');
+    }
+
+    const updateStatusToPaid = async (docId)=> {
+      await store.UPDATE_STATUS_TO_PAID(docId);
+    }
+
+    const updateStatusToPending = async (docId)=> {
+      await store.UPDATE_STATUS_TO_PENDING(docId);
+    }
+
+  useSeoMeta({
+    title: "Invoice",
+    description: 'Invoice',
+    ogTitle: '[og:title]',
+    ogDescription: '[og:description]',
+    ogImage: '[og:image]',
+    ogUrl: '[og:url]',
+  })
 </script>
 
 <style lang="scss" scoped>

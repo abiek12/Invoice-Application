@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "~/firebase/firebaseInit";
 
 export const useGlobalStore = defineStore('globalStore',()=> {
@@ -8,11 +8,12 @@ export const useGlobalStore = defineStore('globalStore',()=> {
   const invoiceData = ref([]);
   const invoicesLoaded = ref(false);
   const currentInvoiceArray = ref(null);
+  const editInvoice = ref(false);
 
   // Getters
 
   // Actions
-  const TOGGLE_INVOICE = () => {    
+  const TOGGLE_INVOICE = () => {        
     invoiceModal.value = !invoiceModal.value;
   }
 
@@ -53,5 +54,97 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     currentInvoiceArray.value = state.filter(invoice => invoice.invoiceId === payload)
   }  
 
-  return {invoiceModal, TOGGLE_INVOICE, modalActive, TOGGLE_MODAL, SET_INVOICE_DATA, GET_INVOICES, invoicesLoaded, invoiceData, SET_CURRENT_INVOICE, currentInvoiceArray}
+  const TOGGLE_EDIT_INVOICE = () => {        
+    editInvoice.value = !editInvoice.value
+  }
+
+  const DELETE_INVOICE_FROM_ARRAY = (state, payload) => {
+    invoiceData.value = state.value.filter(invoice => invoice.docId !== payload );
+  }
+
+  const UPDATE_INVOICE = async (payload) => {
+    // Initially Delete the inoice.
+    DELETE_INVOICE_FROM_ARRAY(invoiceData, payload.docId);
+    await GET_INVOICES();
+    TOGGLE_INVOICE();
+    TOGGLE_EDIT_INVOICE();    
+    SET_CURRENT_INVOICE(invoiceData.value, payload.routeId)
+  }
+
+  const DELETE_INVOICE = async (docId) => {
+    console.log("Deleting document with ID:", docId);
+    try {
+      const invoiceRef = doc(db, 'invoices', docId);
+      await deleteDoc(invoiceRef);
+
+      // Remove from local state after deletion
+      DELETE_INVOICE_FROM_ARRAY(invoiceData, docId);
+      console.log("Invoice deleted successfully");
+      alert("Invoice deleted successfully");
+    } catch (error) {
+      alert("Error while deleting Invoice.");
+      console.error("Error while deleting Invoice.", error);
+    }
+  }
+
+  const UPDATE_STATUS_TO_PAID = async (payload) => {
+    try {
+      const invoiceRef = doc(db, 'invoices', payload);
+      await updateDoc(invoiceRef,{
+        invoicePaid: true,
+        invoicePending: false
+      });
+
+      // Update local state if successful
+      invoiceData.value.forEach(invoice => {
+        if(invoice.docId === payload) {
+          invoice.invoicePaid = true;
+          invoice.invoicePending = false;
+        }
+      })
+    } catch (error) {
+      alert("Error while updating payment status.");
+      console.error("Error while updating payment status.", error);
+    }
+  }
+
+  const UPDATE_STATUS_TO_PENDING = async (payload) => {
+    try {
+      const invoiceRef = doc(db, 'invoices', payload);
+      await updateDoc(invoiceRef,{
+        invoicePaid: false,
+        invoicePending: true,
+        invoiceDraft: false
+      });
+      invoiceData.value.forEach(invoice => {
+        if(invoice.docId === payload) {
+          invoice.invoicePaid = false;
+          invoice.invoicePending = true;
+          invoice.invoiceDraft = false;
+        }
+      })
+    } catch (error) {
+      alert("Error while updating payment status.");
+      console.error("Error while updating payment status.", error);
+    }
+  }
+
+  return {invoiceModal, 
+    TOGGLE_INVOICE, 
+    modalActive, 
+    TOGGLE_MODAL, 
+    SET_INVOICE_DATA, 
+    GET_INVOICES, 
+    invoicesLoaded, 
+    invoiceData, 
+    SET_CURRENT_INVOICE, 
+    currentInvoiceArray,
+    TOGGLE_EDIT_INVOICE,
+    editInvoice,
+    DELETE_INVOICE_FROM_ARRAY,
+    UPDATE_INVOICE,
+    DELETE_INVOICE,
+    UPDATE_STATUS_TO_PAID,
+    UPDATE_STATUS_TO_PENDING
+  }
 })

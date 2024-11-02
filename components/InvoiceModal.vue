@@ -2,7 +2,8 @@
     <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-column">
         <form @submit.prevent="submitForm" class="invoice-content">
             <Loading v-show="loading"/>
-            <h1>New Invoice</h1>
+            <h1 v-if="!editInvoice">New Invoice</h1>
+            <h1 v-else>Edit Invoice</h1>
             <!-- Bill From -->
              <div class="bill-from flex flex-column">
                 <h4>Bill From</h4>
@@ -110,8 +111,9 @@
                     <button type="button" @click="closeInvoice" class="red">Cancel</button>
                 </div>
                 <div class="right">
-                    <button type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
-                    <button type="submit" @click="publishInvoice" class="purple">Create Invoice</button>
+                    <button v-if="!editInvoice" type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
+                    <button v-if="!editInvoice" type="submit" @click="publishInvoice" class="purple">Create Invoice</button>
+                    <button v-if="editInvoice" type="submit" class="purple">Update Invoice</button>
                 </div>
              </div>
         </form>
@@ -122,8 +124,11 @@
 import { ref } from 'vue';
 import { uid } from 'uid';
 import { db } from '../firebase/firebaseInit';
-import { doc, setDoc, collection } from 'firebase/firestore';
+import { doc, setDoc, collection, updateDoc } from 'firebase/firestore';
 
+const route = useRoute();
+
+const docId = ref(null)
 const billerStreetAddress = ref(null)
 const billerCity = ref(null)
 const billerZipCode = ref(null)
@@ -147,12 +152,21 @@ const invoiceTotal = ref(0)
 const loading = ref(false)
 const invoiceWrap = ref(null);
 const dateOptions = { year: "numeric", month: "short", day: "numeric" }
+let editInvoice = ref(false);
 
 // Initialize the store
 const store = useGlobalStore();
 
+// Accessing states
+
+// Continously watch for the state change maintain reactivity
+watch (() => store.editInvoice, (newValue) => { editInvoice.value = newValue;}, {immediate: true})
+
 const closeInvoice = () => {
     store.TOGGLE_INVOICE();
+    if(editInvoice.value) {
+        store.TOGGLE_EDIT_INVOICE();
+    }
 }
 
 const checkClick = (e) => {
@@ -224,10 +238,58 @@ const uploadInvoice = async () => {
     loading.value = false;
     
     store.TOGGLE_INVOICE();
+    store.GET_INVOICES();
 }
 
+const updateInvoice = async () => {
+    try {
+        if (invoiceItemList.value.length <= 0) {
+            alert("Please ensure you filled out work items!");
+            return;
+        }
+        loading.value = true;
+        calculateInvoiceTotal();
+                
+        const invoiceRef = doc(db, 'invoices', docId.value);
+
+        await updateDoc(invoiceRef, {
+            billerStreetAddress: billerStreetAddress.value,
+            billerCity: billerCity.value,
+            billerZipCode: billerZipCode.value,
+            billerCountry: billerCountry.value,
+            clientName: clientName.value,
+            clientEmail: clientEmail.value,
+            clientStreetAddress: clientStreetAddress.value,
+            clientCity: clientCity.value,
+            clientZipCode: clientZipCode.value,
+            clientCountry: clientCountry.value,
+            paymentTerms: paymentTerms.value,
+            paymentDueDate: paymentDueDate.value,
+            paymentDueDateUnix: paymentDueDateUnix.value,
+            productDescription: productDescription.value,
+            invoiceItemList: invoiceItemList.value,
+            invoiceTotal: invoiceTotal.value,
+        });
+        
+        const data = {
+            docId: docId.value,
+            routeId:  route.params.invoiceId
+        }
+                
+        store.UPDATE_INVOICE(data);
+    } catch (error) {
+        console.error("Error updating invoice: ", error);
+        alert("Failed to update the invoice.");
+    } finally {
+        loading.value = false;
+    }
+}
 
 const submitForm = () => {
+    if(editInvoice.value) {
+        updateInvoice();
+        return;
+    }
     uploadInvoice();
 }
 
@@ -235,9 +297,44 @@ const deleteInvoiceItem = (id) => {
     invoiceItemList.value = invoiceItemList.value.filter((item) => item.id !== id);
 }
 
-// Get current date for invoice date field
-invoiceDateUnix.value = Date.now();
-invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString('en-us', dateOptions);
+if(!editInvoice.value) {
+    // Get current date for invoice date field
+    invoiceDateUnix.value = Date.now();
+    invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString('en-us', dateOptions);
+}
+
+if(editInvoice.value) {
+    const currentInvoice = computed(()=> store.currentInvoiceArray[0]);
+    watch(
+        currentInvoice,
+        (newInvoice) => {
+            if (newInvoice) {
+                docId.value = newInvoice.docId;
+                billerStreetAddress.value = newInvoice.billerStreetAddress;
+                billerCity.value = newInvoice.billerCity;
+                billerZipCode.value = newInvoice.billerZipCode;
+                billerCountry.value = newInvoice.billerCountry;
+                clientName.value = newInvoice.clientName;
+                clientEmail.value = newInvoice.clientEmail;
+                clientStreetAddress.value = newInvoice.clientStreetAddress;
+                clientCity.value = newInvoice.clientCity;
+                clientZipCode.value = newInvoice.clientZipCode;
+                clientCountry.value = newInvoice.clientCountry;
+                invoiceDateUnix.value = newInvoice.invoiceDateUnix;
+                invoiceDate.value = newInvoice.invoiceDate;
+                paymentTerms.value = newInvoice.paymentTerms;
+                paymentDueDateUnix.value = newInvoice.paymentDueDateUnix;
+                paymentDueDate.value = newInvoice.paymentDueDate;
+                productDescription.value = newInvoice.productDescription;
+                invoicePending.value = newInvoice.invoicePending;
+                invoiceDraft.value = newInvoice.invoiceDraft;
+                invoiceItemList.value = newInvoice.invoiceItemList;
+                invoiceTotal.value = newInvoice.invoiceTotal;
+            }
+        },
+        { immediate: true } // triggers the watcher immediately for initial load
+    );
+}
 
 watch(paymentTerms, () => {
     // Get current date for payment due date field
