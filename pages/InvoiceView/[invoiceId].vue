@@ -132,6 +132,15 @@ import { useRoute } from 'vue-router';
     const updateStatusToPending = async (docId)=> {
       await store.UPDATE_STATUS_TO_PENDING(docId);
     }
+
+  useSeoMeta({
+    title: "Invoice",
+    description: 'Invoice',
+    ogTitle: '[og:title]',
+    ogDescription: '[og:description]',
+    ogImage: '[og:image]',
+    ogUrl: '[og:url]',
+  })
 </script>
 
 <style lang="scss" scoped>

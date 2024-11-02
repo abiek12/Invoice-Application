@@ -54,6 +54,16 @@ import {ref, onMounted} from 'vue'
     window.removeEventListener('resize', checkScreen);
   });
 
+  
+useSeoMeta({
+  title: 'Invoice App',
+  description: 'Invoice',
+  ogTitle: '[og:title]',
+  ogDescription: '[og:description]',
+  ogImage: '[og:image]',
+  ogUrl: '[og:url]',
+})
+
 </script>
 
 <style lang="scss">

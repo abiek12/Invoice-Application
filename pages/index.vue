@@ -64,9 +64,6 @@ const filteredData = computed(()=> {
     })
 })
 
-console.log(filteredData.value);
-
-
 // Watchers
 if(invoices.value) {
     watch(invoices,
@@ -91,6 +88,15 @@ const filterInvoice = (e)=> {
     }
     filteredInvoices.value = e.target.innerText;
 }
+
+useSeoMeta({
+  title: 'Home',
+  description: 'Invoice Lists',
+  ogTitle: '[og:title]',
+  ogDescription: '[og:description]',
+  ogImage: '[og:image]',
+  ogUrl: '[og:url]',
+})
 </script>
 
 <style lang="scss" scoped>
