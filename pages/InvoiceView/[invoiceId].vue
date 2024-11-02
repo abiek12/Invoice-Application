@@ -100,7 +100,6 @@ import { useRoute } from 'vue-router';
   watch(
       editInvoice,
       (updated) => {
-          console.log("Edit Invoice Updated:", updated);
           if (!updated) {
               currentInvoice.value = store.currentInvoiceArray;
           }
@@ -118,6 +117,12 @@ import { useRoute } from 'vue-router';
     const toggleEditInvoice = () => {      
       store.TOGGLE_EDIT_INVOICE();
       store.TOGGLE_INVOICE();
+    }
+
+    const deleteInvoice = async (docId)=> {
+      await store.DELETE_INVOICE(docId);
+      // Navigate to root page
+      navigateTo('/');
     }
 </script>
 

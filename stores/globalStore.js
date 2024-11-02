@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { db } from "~/firebase/firebaseInit";
 
 export const useGlobalStore = defineStore('globalStore',()=> {
@@ -58,17 +58,33 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     editInvoice.value = !editInvoice.value
   }
 
-  const DELETE_INOVICE = (state, payload) => {
+  const DELETE_INVOICE_FROM_ARRAY = (state, payload) => {
     invoiceData.value = state.value.filter(invoice => invoice.docId !== payload );
   }
 
   const UPDATE_INVOICE = async (payload) => {
     // Initially Delete the inoice.
-    DELETE_INOVICE(invoiceData, payload.docId);
+    DELETE_INVOICE_FROM_ARRAY(invoiceData, payload.docId);
     await GET_INVOICES();
     TOGGLE_INVOICE();
     TOGGLE_EDIT_INVOICE();    
     SET_CURRENT_INVOICE(invoiceData.value, payload.routeId)
+  }
+
+  const DELETE_INVOICE = async (docId) => {
+    console.log("Deleting document with ID:", docId);
+    try {
+      const invoiceRef = doc(db, 'invoices', docId);
+      await deleteDoc(invoiceRef);
+
+      // Remove from local state after deletion
+      DELETE_INVOICE_FROM_ARRAY(invoiceData, docId);
+      console.log("Invoice deleted successfully");
+      alert("Invoice deleted successfully");
+    } catch (error) {
+      alert("Error while deleting Invoice.");
+      console.error("Error while deleting Invoice.", error);
+    }
   }
 
   return {invoiceModal, 
@@ -83,7 +99,8 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     currentInvoiceArray,
     TOGGLE_EDIT_INVOICE,
     editInvoice,
-    DELETE_INOVICE,
-    UPDATE_INVOICE
+    DELETE_INVOICE_FROM_ARRAY,
+    UPDATE_INVOICE,
+    DELETE_INVOICE
   }
 })
