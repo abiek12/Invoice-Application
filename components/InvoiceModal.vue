@@ -238,6 +238,7 @@ const uploadInvoice = async () => {
     loading.value = false;
     
     store.TOGGLE_INVOICE();
+    store.GET_INVOICES();
 }
 
 const updateInvoice = async () => {
