@@ -126,6 +126,7 @@ import { uid } from 'uid';
 import { db } from '../firebase/firebaseInit';
 import { doc, setDoc, collection } from 'firebase/firestore';
 
+const docId = ref(null)
 const billerStreetAddress = ref(null)
 const billerCity = ref(null)
 const billerZipCode = ref(null)
@@ -153,6 +154,8 @@ const editInvoice = ref(null);
 
 // Initialize the store
 const store = useGlobalStore();
+
+// Accessing states
 
 // Continously watch for the state change maintain reactivity
 watch (() => store.editInvoice, (newValue) => { editInvoice.value = newValue;}, {immediate: true})
@@ -244,9 +247,44 @@ const deleteInvoiceItem = (id) => {
     invoiceItemList.value = invoiceItemList.value.filter((item) => item.id !== id);
 }
 
-// Get current date for invoice date field
-invoiceDateUnix.value = Date.now();
-invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString('en-us', dateOptions);
+if(!editInvoice) {
+    // Get current date for invoice date field
+    invoiceDateUnix.value = Date.now();
+    invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString('en-us', dateOptions);
+}
+
+if(editInvoice) {
+    const currentInvoice = computed(()=> store.currentInvoiceArray[0]);
+    watch(
+        currentInvoice,
+        (newInvoice) => {
+            if (newInvoice) {
+                docId.value = newInvoice.docId;
+                billerStreetAddress.value = newInvoice.billerStreetAddress;
+                billerCity.value = newInvoice.billerCity;
+                billerZipCode.value = newInvoice.billerZipCode;
+                billerCountry.value = newInvoice.billerCountry;
+                clientName.value = newInvoice.clientName;
+                clientEmail.value = newInvoice.clientEmail;
+                clientStreetAddress.value = newInvoice.clientStreetAddress;
+                clientCity.value = newInvoice.clientCity;
+                clientZipCode.value = newInvoice.clientZipCode;
+                clientCountry.value = newInvoice.clientCountry;
+                invoiceDateUnix.value = newInvoice.invoiceDateUnix;
+                invoiceDate.value = newInvoice.invoiceDate;
+                paymentTerms.value = newInvoice.paymentTerms;
+                paymentDueDateUnix.value = newInvoice.paymentDueDateUnix;
+                paymentDueDate.value = newInvoice.paymentDueDate;
+                productDescription.value = newInvoice.productDescription;
+                invoicePending.value = newInvoice.invoicePending;
+                invoiceDraft.value = newInvoice.invoiceDraft;
+                invoiceItemList.value = newInvoice.invoiceItemList;
+                invoiceTotal.value = newInvoice.invoiceTotal;
+            }
+        },
+        { immediate: true } // triggers the watcher immediately for initial load
+    );
+}
 
 watch(paymentTerms, () => {
     // Get current date for payment due date field

@@ -54,11 +54,8 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     currentInvoiceArray.value = state.filter(invoice => invoice.invoiceId === payload)
   }  
 
-  const TOGGLE_EDIT_INVOICE = () => {    
-    console.log(editInvoice.value);
-    
+  const TOGGLE_EDIT_INVOICE = () => {        
     editInvoice.value = !editInvoice.value
-    console.log(editInvoice.value);
   }
 
   return {invoiceModal, 
