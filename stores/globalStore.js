@@ -67,8 +67,8 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     DELETE_INOVICE(invoiceData, payload.docId);
     await GET_INVOICES();
     TOGGLE_INVOICE();
-    TOGGLE_EDIT_INVOICE();
-    SET_CURRENT_INVOICE(payload.routeId)
+    TOGGLE_EDIT_INVOICE();    
+    SET_CURRENT_INVOICE(invoiceData.value, payload.routeId)
   }
 
   return {invoiceModal, 

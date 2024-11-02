@@ -94,7 +94,19 @@ import { useRoute } from 'vue-router';
 
     //accessing states
     invoices = computed(() => store.invoiceData);
+    let editInvoice = computed(()=> store.editInvoice);
 
+  // Watcher to respond to changes in editInvoice
+  watch(
+      editInvoice,
+      (updated) => {
+          console.log("Edit Invoice Updated:", updated);
+          if (!updated) {
+              currentInvoice.value = store.currentInvoiceArray;
+          }
+      },
+      { immediate: true }
+  );
 
     const getCurrentInvoice = () => {        
         store.SET_CURRENT_INVOICE(invoices.value, route.params.invoiceId);       
