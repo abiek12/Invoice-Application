@@ -8,13 +8,13 @@
             </div>
             <div class="right flex">
                 <div class="filter flex" @click="toggleFilterMenu">
-                    <span>Filter by status</span>
+                    <span>Filter by status<span v-if="filteredInvoices"> : {{ filteredInvoices }}</span></span>
                     <img src="/assets/icon-arrow-down.svg" alt="">
                     <ul v-show="filterMenu" class="filter-menu">
-                        <li>Draft</li>
-                        <li>Pending</li>
-                        <li>Paid</li>
-                        <li>Clear Filter</li>
+                        <li @click="filterInvoice">Draft</li>
+                        <li @click="filterInvoice">Pending</li>
+                        <li @click="filterInvoice">Paid</li>
+                        <li @click="filterInvoice">Clear Filter</li>
                     </ul>
                 </div>
                 <div @click="newInvoice" class="button flex">
@@ -27,7 +27,7 @@
         </div>
         <!-- Invoices -->
          <div class="" v-if="invoices.values">
-            <invoice v-for="(invoice, index) in invoices" :invoice="invoice" :key="index"/>
+            <invoice v-for="(invoice, index) in filteredData" :invoice="invoice" :key="index"/>
          </div>
          <div class="empty flex flex-column" v-else>
             <img src="../assets/illustration-empty.svg" alt="Invoice empty illustration">
@@ -42,12 +42,30 @@ import { ref } from 'vue';
 
 const filterMenu = ref(false);
 let invoices = ref([]);
+let filteredInvoices= ref(null);
 
 // Initialize the store
 const store = useGlobalStore();
 
 //accessing states
 invoices = computed(() => store.invoiceData);
+const filteredData = computed(()=> {
+    return invoices.value.filter((invoice)=>{
+        if(filteredInvoices.value === 'Draft') {
+            return invoice.invoiceDraft === true;
+        }
+        if(filteredInvoices.value === 'Pending') {
+            return invoice.invoicePending === true;
+        }
+        if(filteredInvoices.value === 'Paid') {
+            return invoice.invoicePaid === true;
+        }
+        return invoice
+    })
+})
+
+console.log(filteredData.value);
+
 
 // Watchers
 if(invoices.value) {
@@ -64,6 +82,14 @@ const newInvoice = () => {
 
 const toggleFilterMenu = () => {
     filterMenu.value = !filterMenu.value;
+}
+
+const filterInvoice = (e)=> {
+    if(e.target.innerText === 'Clear Filter') {
+        filteredInvoices.value = null;
+        return;
+    }
+    filteredInvoices.value = e.target.innerText;
 }
 </script>
 
@@ -89,6 +115,7 @@ const toggleFilterMenu = () => {
 
                 span {
                     font-size: 12px;
+                    cursor: pointer;
                 }
             }
 
