@@ -8,11 +8,12 @@ export const useGlobalStore = defineStore('globalStore',()=> {
   const invoiceData = ref([]);
   const invoicesLoaded = ref(false);
   const currentInvoiceArray = ref(null);
+  const editInvoice = ref(false);
 
   // Getters
 
   // Actions
-  const TOGGLE_INVOICE = () => {    
+  const TOGGLE_INVOICE = () => {        
     invoiceModal.value = !invoiceModal.value;
   }
 
@@ -53,5 +54,21 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     currentInvoiceArray.value = state.filter(invoice => invoice.invoiceId === payload)
   }  
 
-  return {invoiceModal, TOGGLE_INVOICE, modalActive, TOGGLE_MODAL, SET_INVOICE_DATA, GET_INVOICES, invoicesLoaded, invoiceData, SET_CURRENT_INVOICE, currentInvoiceArray}
+  const TOGGLE_EDIT_INVOICE = () => {    
+    editInvoice.value = !editInvoice.value
+  }
+
+  return {invoiceModal, 
+    TOGGLE_INVOICE, 
+    modalActive, 
+    TOGGLE_MODAL, 
+    SET_INVOICE_DATA, 
+    GET_INVOICES, 
+    invoicesLoaded, 
+    invoiceData, 
+    SET_CURRENT_INVOICE, 
+    currentInvoiceArray,
+    TOGGLE_EDIT_INVOICE,
+    editInvoice
+  }
 })
