@@ -113,7 +113,7 @@
                 <div class="right">
                     <button v-if="!editInvoice" type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
                     <button v-if="!editInvoice" type="submit" @click="publishInvoice" class="purple">Create Invoice</button>
-                    <button v-if="editInvoice" type="submit" @click="updateInvoice" class="purple">Update Invoice</button>
+                    <button v-if="editInvoice" type="submit" class="purple">Update Invoice</button>
                 </div>
              </div>
         </form>
@@ -124,7 +124,9 @@
 import { ref } from 'vue';
 import { uid } from 'uid';
 import { db } from '../firebase/firebaseInit';
-import { doc, setDoc, collection } from 'firebase/firestore';
+import { doc, setDoc, collection, updateDoc } from 'firebase/firestore';
+
+const route = useRoute();
 
 const docId = ref(null)
 const billerStreetAddress = ref(null)
@@ -238,7 +240,55 @@ const uploadInvoice = async () => {
     store.TOGGLE_INVOICE();
 }
 
+const updateInvoice = async () => {
+    try {
+        if (invoiceItemList.value.length <= 0) {
+            alert("Please ensure you filled out work items!");
+            return;
+        }
+        loading.value = true;
+        calculateInvoiceTotal();
+                
+        const invoiceRef = doc(db, 'invoices', docId.value);
+
+        await updateDoc(invoiceRef, {
+            billerStreetAddress: billerStreetAddress.value,
+            billerCity: billerCity.value,
+            billerZipCode: billerZipCode.value,
+            billerCountry: billerCountry.value,
+            clientName: clientName.value,
+            clientEmail: clientEmail.value,
+            clientStreetAddress: clientStreetAddress.value,
+            clientCity: clientCity.value,
+            clientZipCode: clientZipCode.value,
+            clientCountry: clientCountry.value,
+            paymentTerms: paymentTerms.value,
+            paymentDueDate: paymentDueDate.value,
+            paymentDueDateUnix: paymentDueDateUnix.value,
+            productDescription: productDescription.value,
+            invoiceItemList: invoiceItemList.value,
+            invoiceTotal: invoiceTotal.value,
+        });
+        
+        const data = {
+            docId: docId.value,
+            routeId:  route.params.invoiceId
+        }
+                
+        store.UPDATE_INVOICE(data);
+    } catch (error) {
+        console.error("Error updating invoice: ", error);
+        alert("Failed to update the invoice.");
+    } finally {
+        loading.value = false;
+    }
+}
+
 const submitForm = () => {
+    if(editInvoice.value) {
+        updateInvoice();
+        return;
+    }
     uploadInvoice();
 }
 
@@ -253,7 +303,6 @@ if(!editInvoice.value) {
 }
 
 if(editInvoice.value) {
-    console.log("edit invoice");
     const currentInvoice = computed(()=> store.currentInvoiceArray[0]);
     watch(
         currentInvoice,

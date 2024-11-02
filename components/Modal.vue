@@ -24,7 +24,6 @@ const closeInvoice = () => {
     store.TOGGLE_MODAL();
     store.TOGGLE_INVOICE();
     if(editInvoice.value) {
-      console.log("Triggered");      
       store.TOGGLE_EDIT_INVOICE();
     }
 }

@@ -58,6 +58,19 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     editInvoice.value = !editInvoice.value
   }
 
+  const DELETE_INOVICE = (state, payload) => {
+    invoiceData.value = state.value.filter(invoice => invoice.docId !== payload );
+  }
+
+  const UPDATE_INVOICE = async (payload) => {
+    // Initially Delete the inoice.
+    DELETE_INOVICE(invoiceData, payload.docId);
+    await GET_INVOICES();
+    TOGGLE_INVOICE();
+    TOGGLE_EDIT_INVOICE();
+    SET_CURRENT_INVOICE(payload.routeId)
+  }
+
   return {invoiceModal, 
     TOGGLE_INVOICE, 
     modalActive, 
@@ -69,6 +82,8 @@ export const useGlobalStore = defineStore('globalStore',()=> {
     SET_CURRENT_INVOICE, 
     currentInvoiceArray,
     TOGGLE_EDIT_INVOICE,
-    editInvoice
+    editInvoice,
+    DELETE_INOVICE,
+    UPDATE_INVOICE
   }
 })
