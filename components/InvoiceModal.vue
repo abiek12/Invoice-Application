@@ -150,7 +150,7 @@ const invoiceTotal = ref(0)
 const loading = ref(false)
 const invoiceWrap = ref(null);
 const dateOptions = { year: "numeric", month: "short", day: "numeric" }
-const editInvoice = ref(null);
+let editInvoice = ref(false);
 
 // Initialize the store
 const store = useGlobalStore();
@@ -238,7 +238,6 @@ const uploadInvoice = async () => {
     store.TOGGLE_INVOICE();
 }
 
-
 const submitForm = () => {
     uploadInvoice();
 }
@@ -247,13 +246,14 @@ const deleteInvoiceItem = (id) => {
     invoiceItemList.value = invoiceItemList.value.filter((item) => item.id !== id);
 }
 
-if(!editInvoice) {
+if(!editInvoice.value) {
     // Get current date for invoice date field
     invoiceDateUnix.value = Date.now();
     invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString('en-us', dateOptions);
 }
 
-if(editInvoice) {
+if(editInvoice.value) {
+    console.log("edit invoice");
     const currentInvoice = computed(()=> store.currentInvoiceArray[0]);
     watch(
         currentInvoice,

@@ -4,7 +4,7 @@
         <div class="header flex">
             <div class="left flex flex-column">
                 <h1>Invoice</h1>
-                <span>There are 4 total Invoices</span>
+                <span>There are {{ invoices.length }} total Invoices</span>
             </div>
             <div class="right flex">
                 <div class="filter flex" @click="toggleFilterMenu">
@@ -41,12 +41,22 @@
 import { ref } from 'vue';
 
 const filterMenu = ref(false);
+let invoices = ref([]);
 
 // Initialize the store
 const store = useGlobalStore();
 
 //accessing states
-const invoices = computed(() => store.invoiceData);
+invoices = computed(() => store.invoiceData);
+
+// Watchers
+if(invoices.value) {
+    watch(invoices,
+        (updatedInvoices) => {
+            invoices.value = updatedInvoices
+        }
+    )
+}
 
 const newInvoice = () => {
     store.TOGGLE_INVOICE();
