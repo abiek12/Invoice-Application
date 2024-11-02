@@ -55,7 +55,10 @@ export const useGlobalStore = defineStore('globalStore',()=> {
   }  
 
   const TOGGLE_EDIT_INVOICE = () => {    
+    console.log(editInvoice.value);
+    
     editInvoice.value = !editInvoice.value
+    console.log(editInvoice.value);
   }
 
   return {invoiceModal, 

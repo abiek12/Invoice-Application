@@ -2,7 +2,8 @@
     <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-column">
         <form @submit.prevent="submitForm" class="invoice-content">
             <Loading v-show="loading"/>
-            <h1>New Invoice</h1>
+            <h1 v-if="!editInvoice">New Invoice</h1>
+            <h1 v-else>Edit Invoice</h1>
             <!-- Bill From -->
              <div class="bill-from flex flex-column">
                 <h4>Bill From</h4>
@@ -110,8 +111,9 @@
                     <button type="button" @click="closeInvoice" class="red">Cancel</button>
                 </div>
                 <div class="right">
-                    <button type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
-                    <button type="submit" @click="publishInvoice" class="purple">Create Invoice</button>
+                    <button v-if="!editInvoice" type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
+                    <button v-if="!editInvoice" type="submit" @click="publishInvoice" class="purple">Create Invoice</button>
+                    <button v-if="editInvoice" type="submit" @click="updateInvoice" class="purple">Update Invoice</button>
                 </div>
              </div>
         </form>
@@ -147,12 +149,19 @@ const invoiceTotal = ref(0)
 const loading = ref(false)
 const invoiceWrap = ref(null);
 const dateOptions = { year: "numeric", month: "short", day: "numeric" }
+const editInvoice = ref(null);
 
 // Initialize the store
 const store = useGlobalStore();
 
+// Continously watch for the state change maintain reactivity
+watch (() => store.editInvoice, (newValue) => { editInvoice.value = newValue;}, {immediate: true})
+
 const closeInvoice = () => {
     store.TOGGLE_INVOICE();
+    if(editInvoice.value) {
+        store.TOGGLE_EDIT_INVOICE();
+    }
 }
 
 const checkClick = (e) => {

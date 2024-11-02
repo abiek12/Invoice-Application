@@ -15,12 +15,18 @@
 // Initialize the store
 const store = useGlobalStore();
 
+const editInvoice = computed(()=> store.editInvoice);
+
 const closeModal = () => {
     store.TOGGLE_MODAL();
 }
 const closeInvoice = () => {
     store.TOGGLE_MODAL();
     store.TOGGLE_INVOICE();
+    if(editInvoice.value) {
+      console.log("Triggered");      
+      store.TOGGLE_EDIT_INVOICE();
+    }
 }
 </script>
 
